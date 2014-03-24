@@ -48,6 +48,7 @@ void drawNetwork(
 		dotfp << ", fillcolor=" << color;
 		dotfp << ", fontcolor=" << fontcolor;
 		dotfp << ", label=\"" << node_label(v) << "\"";
+		dotfp << ", shape=circle";
 		dotfp << "]\n";
 	}
 	
@@ -64,6 +65,7 @@ void drawNetwork(
 			dotfp << ", headlabel=" << e.back_index + 1;
 			dotfp << ", color=" << color;
 			dotfp << ", dir=none";
+			dotfp << ", len=2";
 			dotfp << "]\n";
 		}
 	}

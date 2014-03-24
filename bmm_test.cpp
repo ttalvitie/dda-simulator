@@ -11,6 +11,8 @@ using namespace std;
 Network net;
 vector<bool> coloring;
 
+size_t end_round;
+
 struct Listener : public EmptyListener<BMMMachine> {
 	void send(
 		size_t round,
@@ -19,6 +21,7 @@ struct Listener : public EmptyListener<BMMMachine> {
 	) {
 		stringstream name;
 		name << "bmm_out_" << round + 1;
+		end_round = round + 1;
 		
 		vector<tuple<size_t, size_t, string>> arrows;
 		for(size_t v = 0; v < net.size(); ++v) {
@@ -60,7 +63,15 @@ int main() {
 	}
 	
 	Listener listener;
-	simulatePortNumberedDDA(net, bmm, coloring, listener);
+	vector<BMMMachine::State> states =
+		simulatePortNumberedDDA(net, bmm, coloring, listener);
+	
+	// Draw the final graph.
+	vector<vector<BMMMachine::Message>> fakemsgs(net.size());
+	for(size_t v = 0; v < net.size(); ++v) {
+		fakemsgs[v].resize(net[v].size(), BMMMachine::Message::nothing);
+	}
+	listener.send(end_round, states, fakemsgs);
 	
 	return 0;
 }
