@@ -17,6 +17,7 @@ namespace dda_simulator {
 ///  - node_label which takes node index and returns the label string.
 /// Additionally, the additional arrows in the network are given as tuples
 /// (node, node_edge, color).
+/// Nodes may be paired together by specifying list of pairs.
 void drawNetwork(
 	const Network& network,
 	const std::string& name,
@@ -31,7 +32,9 @@ void drawNetwork(
 			std::stringstream ss;
 			ss << v;
 			return ss.str();
-		}
+		},
+	 const std::vector<std::pair<std::size_t, std::size_t>>& pairs =
+		std::vector<std::pair<std::size_t, std::size_t>>()
 ) {
 	std::string dotname = name;
 	dotname.append(".dot");
@@ -50,6 +53,10 @@ void drawNetwork(
 		dotfp << ", label=\"" << node_label(v) << "\"";
 		dotfp << ", shape=circle";
 		dotfp << "]\n";
+	}
+	
+	for(std::pair<std::size_t, std::size_t> p : pairs) {
+		dotfp << p.first << " -> " << p.second << " [dir=none, weight=50, penwidth=3]\n";
 	}
 	
 	// Draw edges.

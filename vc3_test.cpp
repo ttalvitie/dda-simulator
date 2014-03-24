@@ -14,7 +14,8 @@ Network net;
 // The simulated network, with each node v doubled to nodes v and v + net.size().
 Network simnet;
 
-std::size_t end_round;
+size_t end_round;
+vector<pair<size_t, size_t>> pairs;
 
 struct Listener : public EmptyListener<VC3Machine> {
 	void send(
@@ -50,9 +51,9 @@ struct Listener : public EmptyListener<VC3Machine> {
 		
 		auto edge_color = [&](size_t v1, size_t e1, size_t v2, size_t e2) {
 			if(v1 < net.size()) {
-				return states[v1].state1.match == e1 ? "red" : "black";
+				return states[v1].state2.match == e1 ? "red" : "black";
 			} else {
-				return states[v1 - net.size()].state2.match == e1 ? "red" : "black";
+				return states[v1 - net.size()].state1.match == e1 ? "red" : "black";
 			}
 		};
 		
@@ -66,7 +67,7 @@ struct Listener : public EmptyListener<VC3Machine> {
 			return ss.str();
 		};
 		
-		drawNetwork(simnet, name.str(), arrows, node_color, edge_color, node_label);
+		drawNetwork(simnet, name.str(), arrows, node_color, edge_color, node_label, pairs);
 	}
 };
 
@@ -77,6 +78,8 @@ int main() {
 	
 	simnet.resize(2 * net.size());
 	for(std::size_t v = 0; v < net.size(); ++v) {
+		pairs.emplace_back(v, v + net.size());
+		
 		simnet[v] = net[v];
 		simnet[v + net.size()] = net[v];
 		
